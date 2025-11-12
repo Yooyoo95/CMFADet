@@ -1,0 +1,26 @@
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+
+## RGB images
+train: /home/csyu/dataset_VEDAI/images/train # train images 
+val: /home/csyu/dataset_VEDAI/images/val # val images
+test : /home/csyu/dataset_VEDAI/images/test # test images
+
+## Infrared images
+train_ir: /home/csyu/dataset_VEDAI/image/train # train images
+val_ir: /home/csyu/dataset_VEDAI/image/val # val images
+test_ir: /home/csyu/dataset_VEDAI/image/test # test images
+
+
+# Classes
+nc: 9
+names:
+  0: Car
+  1: Truck
+  2: Tractor
+  3: Camping Car
+  4: Van
+  5: Others
+  6: Pickup
+  7: Boat
+  8: Plane
+

@@ -1,0 +1,86 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# YOLO11 Oriented Bounding Boxes (OBB) model with P3-P5 outputs. For Usage examples see https://docs.ultralytics.com/tasks/obb
+
+# Parameters
+nc: 5 # number of classes
+scales: # model compound scaling constants, i.e. 'model=yolo11n-obb.yaml' will call yolo11-obb.yaml with scale 'n'
+  # [depth, width, max_channels]
+  n: [0.50, 0.25, 1024] # summary: 344 layers, 2695747 parameters, 2695731 gradients, 6.9 GFLOPs
+  s: [0.50, 0.50, 1024] # summary: 344 layers, 9744931 parameters, 9744915 gradients, 22.7 GFLOPs
+  m: [0.50, 1.00, 512] # summary: 434 layers, 20963523 parameters, 20963507 gradients, 72.2 GFLOPs
+  l: [1.00, 1.00, 512] # summary: 656 layers, 26220995 parameters, 26220979 gradients, 91.3 GFLOPs
+  x: [1.00, 1.50, 512] # summary: 656 layers, 58875331 parameters, 58875315 gradients, 204.3 GFLOPs
+
+# YOLO11n backbone
+backbone:
+  # [from, repeats, module, args]
+  # RGB
+  - [-1, 1, Conv, [64, 3, 2]] # 0-P1/2
+  - [-1, 1, Conv, [128, 3, 2]] # 1-P2/4
+  - [-1, 2, SFEM, [128]]      # 2 
+  - [-1, 1, Conv, [256, 3, 2]] # 3-P3/8
+
+  # IR
+  - [-4, 1, Conv, [64, 3, 2]] # 4 
+  - [-1, 1, Conv, [128, 3, 2]] # 5 
+  - [-1, 2, IR_AFAB, [256, False, 0.25]] # 6
+  - [-1, 1, Conv, [256, 3, 2]] # 7
+
+  # Fusion method
+  - [-3, 1, CIFusion, [64]] # 8
+
+  # RGB
+  - [-4, 2, C3k2, [512, False, 0.25]] # 9
+  - [-1, 1, Conv, [512, 3, 2]] # 10
+
+  # IR
+  - [-4, 2, C3k2, [512, False, 0.25]] # 11
+  - [-1, 1, Conv, [512, 3, 2]] # 12
+
+  # Fusion method
+  - [-3, 1, CIFusion, [128]] # 13
+
+  # RGB
+  - [-4, 2, C3k2, [512, True]] # 14
+  - [-1, 1, Conv, [1024, 3, 2]] # 15
+
+  # IR
+  - [-4, 2, C3k2, [512, True]] # 16
+  - [-1, 1, Conv, [1024, 3, 2]] # 17
+
+  # Fusion method
+  - [-3, 1, CIFusion, [256]] # 18
+
+  # RGB
+  - [-4, 2, C3k2, [1024, True]] # 19
+  - [-1, 1, SPPF, [1024, 5]] # 20
+  - [-1, 2, C2PSA, [1024]] # 21
+
+  # IR
+  - [-4, 2, C3k2, [1024, True]] # 22
+  - [-1, 1, SPPF, [1024, 5]] # 23
+  - [-1, 2, C2PSA, [1024]] # 24
+  
+  - [[9,11], 1, ADD, [1]] # 25
+  - [[14,16], 1, ADD, [1]] # 26
+  - [[21,24],1, ADD, [1]] # 27
+
+# YOLO11n head
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 28
+  - [[-1, 26], 1, Concat, [1]] # cat backbone P4 29
+  - [-1, 2, C3k2, [512, False]] # 30
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]] # 31
+  - [[-1, 25], 1, Concat, [1]] # cat backbone P3 # 32
+  - [-1, 2, C3k2, [512, False]] # 33
+
+  - [-1, 1, Conv, [256, 3, 2]] # 34
+  - [[-1, 30], 1, Concat, [1]] # 35
+  - [-1, 2, C3k2, [512, False]] # 36
+
+  - [-1, 1, Conv, [512, 3, 2]] # 37
+  - [[-1, 27], 1, Concat, [1]] # 38
+  - [-1, 2, C3k2, [512, True]] # 39 (P5/32-large)
+
+  - [[33, 36, 39], 1, OBB_ATAH, [nc, 1, 512]] # Detect(P3, P4, P5)

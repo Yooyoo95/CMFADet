@@ -1,0 +1,21 @@
+# dataset path
+# path: /root/code/project/ultralytics/
+# train: ./dataset/images/train  # path + train
+# val: ./dataset/images/val # path + val
+# test: ./dataset/images/test # path + test
+
+# # number of classes
+# nc: 1
+
+# # class names
+# names: ['ship']
+
+# path: /root/code/project/ultralytics/
+train: ./images/train  # train images 
+val: ./images/val  # val images 
+test: ./images/test  # test images 
+
+nc: 2
+
+names: ['0', '2']
+

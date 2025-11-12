@@ -1,0 +1,20 @@
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+
+## RGB images
+train: /home/csyu/dataset_DV/DroneVehicle/OBBCrop/images/train # train images
+val: /home/csyu/dataset_DV/DroneVehicle/OBBCrop/images/val # val images
+test : /home/csyu/dataset_DV/DroneVehicle/OBBCrop/images/test # test images
+
+## Infrared images
+train_ir: /home/csyu/dataset_DV/DroneVehicle/OBBCrop/image/train # train images
+val_ir: /home/csyu/dataset_DV/DroneVehicle/OBBCrop/image/val # val images
+test_ir: /home/csyu/dataset_DV/DroneVehicle/OBBCrop/image/test # test images
+
+# Classes
+names:
+  0: car
+  1: truck
+  2: bus
+  3: van
+  4: freight_car
+
